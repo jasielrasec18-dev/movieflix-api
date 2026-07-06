@@ -18,12 +18,13 @@
     "eslint": "^10.6.0",
     "globals": "^17.7.0",
     "prettier": "3.9.4",
-    "prisma": "^7.8.0",
+    "prisma": "^4.13.0",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.62.0"
   },
   "dependencies": {
+    "@prisma/client": "^4.13.0",
     "express": "^5.2.1"
   }
 }
