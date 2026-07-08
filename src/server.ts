@@ -29,11 +29,9 @@ app.post('/movies', async (req, res) => {
         })
 
         if (movieWithSameTitle) {
-            return res
-                .status(409)
-                .send({
-                    message: 'Já existe um filme cadastrado com esse título',
-                })
+            return res.status(409).send({
+                message: 'Já existe um filme cadastrado com esse título',
+            })
         }
 
         await prisma.movie.create({
@@ -53,7 +51,6 @@ app.post('/movies', async (req, res) => {
 })
 
 app.put('/movies/:id', async (req, res) => {
-    // pegar os dados do filme que será atualizado
     const id = Number(req.params.id)
 
     try {
@@ -72,7 +69,6 @@ app.put('/movies/:id', async (req, res) => {
             ? new Date(data.release_date)
             : undefined
 
-        // pegar os dados do filme que será atualizado e atualizar ele no prisma
         await prisma.movie.update({
             where: {
                 id,
@@ -82,7 +78,7 @@ app.put('/movies/:id', async (req, res) => {
     } catch (error) {
         return res.status(500).send({ message: 'Falha ao atualizar o filme' })
     }
-    // retornar o status correto informando que o filme foi atualizado
+
     res.status(200).send()
 })
 
@@ -106,6 +102,30 @@ app.delete('/movies/:id', async (req, res) => {
     }
 
     res.status(200).send()
+})
+
+app.get('/movies/:genreName', async (req, res) => {
+    try {
+        const moviesFilteredByGenreName = await prisma.movie.findMany({
+            include: {
+                genres: true,
+                languages: true,
+            },
+            where: {
+                genres: {
+                    name: {
+                        equals: req.params.genreName,
+                        mode: 'insensitive',
+                    },
+                },
+            },
+        })
+        res.status(200).send(moviesFilteredByGenreName)
+    } catch (error) {
+        return res
+            .status(500)
+            .send({ message: 'Falha ao buscar os filmes por gênero' })
+    }
 })
 
 app.listen(port, () => {
